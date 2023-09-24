@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = "mongodb+srv://serphis48:pIwlBV0E3r93vZEY@zgody.s1rg1zn.mongodb.net/zgody?retryWrites=true&w=majority"
+}
+
+model User {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  email           String          @unique
+  completedForms  CompletedForm[]
+}
+
+model Agreement {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  content         String          @unique
+  completedForms  CompletedForm[]
+}
+
+model CompletedForm {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
+  userEmail           String
+  user                User            @relation(fields: [userEmail], references: [email])
+  agreementContent    String
+  agreement           Agreement       @relation(fields: [agreementContent], references: [content])
+  createdAt           DateTime        @default(now())
+}
