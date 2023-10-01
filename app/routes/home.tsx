@@ -3,13 +3,16 @@ import { Form, NavLink, useLoaderData } from "@remix-run/react";
 import { db } from '../services/index.js'
 import { z } from 'zod'
 import { useState } from 'react';
+import { Agreement, CompletedForm, User, FormExample } from '@prisma/client';
 
 export async function loader() {
     // SELECT * FROM "Zgody"
     const agreements = await db.agreement.findMany()
     const users = await db.user.findMany()
+    const completedForms = await db.completedForm.findMany()
+    const formExamples = await db.formExample.findMany()
     return {
-        data: agreements, users
+        data: agreements, users, completedForms, formExamples
     }
 }
 
@@ -19,28 +22,55 @@ export const emailSchema = z.object({
 
 export async function action({ request }){
     const formData = await request.formData()
-    const body = Object.fromEntries(formData.entries())
+    const body = Object.fromEntries(formData)
 
-    const { error, success, data } = emailSchema.safeParse(body)
+    const { error, success, data } = body
+
+    // if (!success){
+    //     //error handler
+    //     return null
+    // }
+    // add to db
+    // await db.user.create({
+    //     data: data.email
+    // })
+
+    // const email = formData.get('email')
+    // const checked = formData.getAll('checked')
+    // const fields = {email, checked}
+
+    //console.log(fields)
+
+    console.log(formData.getAll('checked'))
     
-    console.log('error', error, 'success', success, 'data', data)
+    // if (!success){
+    //     //error handler
+    //     return null
+    // }
+    // await db.completedForm.create({ //nie działa tworzenie pełnego formularza
+    //     data: {
+    //         agreementlist: ['a', 'b'],
+    //         user: {
+    //             create: {
+    //                 email: 'piotrnowak@gmail.com',
+    //             },
+    //         }
+    //     }
+    // })
 
-    let { _action, ...values } = Object.fromEntries(formData)
-
-    if (!success){
-        //error handler
+    if (!formData.getAll('checked')){
         return null
     }
-    //add to db
-    await db.user.create({
-        data: data
+    await db.formExample.create({ //działa tworzenie pełnego formularza
+        data: { listazgod: formData.getAll('checked')}
     })
 
-    return redirect('/')
+
+    return redirect('/home')
 }
 
 export default function(){
-    const { data: agreements, users } = useLoaderData();
+    const { data: agreements, users, completedForms } = useLoaderData();
     const [checkedValues, setValue] = useState([])
 
     function handleChange(event){
@@ -54,10 +84,15 @@ export default function(){
             })
         }
     }
-    console.log(checkedValues)
+    //console.log(checkedValues)
 
     return (
         <main>
+            <p>
+                <NavLink to="/create">
+                    <button className="text-4xl">+</button>
+                </NavLink>
+            </p>
             <form method="post">
                 <p>
                     {'Email'}<br/>
@@ -65,9 +100,9 @@ export default function(){
                 </p>
                 {agreements.length ? (
                     <ul>
-                        {agreements.map((agreement) => (
+                        {agreements.map((agreement: Agreement) => (
                             <li key={agreement.id}>
-                                <input type="checkbox" value={ agreement.id } name="checked" onChange={handleChange}/>{" "}
+                                <input type="checkbox" value={ agreement.content } name="checked" onChange={handleChange}/>{" "}
                                 {agreement.content}
                             </li>
                         ))}
@@ -76,18 +111,15 @@ export default function(){
                     <p>Nobody here!</p>
                 )}
                 <p>
-                    <NavLink to="/create">
-                        <button className="text-4xl">+</button>
-                    </NavLink>
-                </p>
-                <p>
                     <button type="submit" name="_home" className="border border-black">Submit</button>
                 </p>
-                {users.length ? (
+                {completedForms.length ? (
                     <ul>
-                        {users.map((user) => (
-                            <li key={user.id}>
-                                {user.email}
+                        {completedForms.map((completedForm: CompletedForm) => (
+                            <li key={completedForm.id}>
+                                {completedForm.id}
+                                {completedForm.userId}
+                                {completedForm.agreementId}
                             </li>
                         ))}
                     </ul>

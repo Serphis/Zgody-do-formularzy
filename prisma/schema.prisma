@@ -11,22 +11,27 @@ datasource db {
 }
 
 model User {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  email           String          @unique
-  completedForms  CompletedForm[]
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  email             String            @unique
+  completedForms    CompletedForm[]
 }
 
 model Agreement {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  content         String          @unique
-  completedForms  CompletedForm[]
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  content           String            @unique
 }
 
 model CompletedForm {
-  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
-  userEmail           String
-  user                User            @relation(fields: [userEmail], references: [email])
-  agreementContent    String
-  agreement           Agreement       @relation(fields: [agreementContent], references: [content])
-  createdAt           DateTime        @default(now())
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt         DateTime          @default(now())
+
+  agreementlist     String[]
+
+  userID            String            @db.ObjectId
+  user              User              @relation(fields: [userID], references: [id])
+}
+
+model FormExample {
+  id                String            @id @default(auto()) @map("_id") @db.ObjectId
+  listazgod         String[]
 }

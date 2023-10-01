@@ -29,12 +29,13 @@ export async function action({ request }){
         //error handler
         return null
     }
+    
     //add to db
     await db.agreement.create({
         data: data
     })
 
-    return redirect('/')
+    return redirect('/home')
 }
 
 export default function(){
@@ -42,6 +43,11 @@ export default function(){
 
     return (
         <main>
+            <p>
+                <NavLink to="/home">
+                    <button className="text-4xl">-</button>
+                </NavLink>
+            </p>
             <form method="post">
                 {agreements.length ? (
                     <ul>
