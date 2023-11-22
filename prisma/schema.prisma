@@ -6,32 +6,31 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = "mongodb+srv://serphis48:pIwlBV0E3r93vZEY@zgody.s1rg1zn.mongodb.net/zgody?retryWrites=true&w=majority"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id                String            @id @default(auto()) @map("_id") @db.ObjectId
-  email             String            @unique
-  completedForms    CompletedForm[]
+  id                  Int                   @id @default(autoincrement())
+  email               String                @unique
+
+  agreements          UserAgreement[]
 }
 
 model Agreement {
-  id                String            @id @default(auto()) @map("_id") @db.ObjectId
-  content           String            @unique
+  id                  Int                   @id @default(autoincrement())
+  content             String                @unique
+  canBeRemoved        Boolean               @default(true)
+
+  users               UserAgreement[]
 }
 
-model CompletedForm {
-  id                String            @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt         DateTime          @default(now())
+model UserAgreement {
+  formId              Int                   @id @default(autoincrement())
 
-  agreementlist     String[]
-
-  userID            String            @db.ObjectId
-  user              User              @relation(fields: [userID], references: [id])
-}
-
-model FormExample {
-  id                String            @id @default(auto()) @map("_id") @db.ObjectId
-  listazgod         String[]
+  user                User                  @relation(fields: [userId], references: [id])
+  userId              Int
+  agreement           Agreement             @relation(fields: [agreementId], references: [id])
+  agreementId         Int
+  assignedAt          DateTime              @default(now())
 }
