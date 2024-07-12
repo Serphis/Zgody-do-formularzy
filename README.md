@@ -23,5 +23,5 @@
   
 ## Zrzuty ekranu
 
-<img src="./screenshots/userAgreement.png" width="300"><hr> - Strona główna, w której użytkownik ma możliwość wpisania emaila, wybrania zgód i zatwierdzenia wyborów.<hr>
-<img src="./screenshots/Agreement.png" width="300"><hr> - Strona tworzenia zgód przy pomocy pola tekstowego oraz przycisku "Dodaj".<hr>
+<img src="./screenshots/userAgreement.png" height="300"><hr> - Strona główna, w której użytkownik ma możliwość wpisania emaila, wybrania zgód i zatwierdzenia wyborów.<hr>
+<img src="./screenshots/Agreement.png" height="300"><hr> - Strona tworzenia zgód przy pomocy pola tekstowego oraz przycisku "Dodaj".<hr>
